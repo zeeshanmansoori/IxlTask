@@ -10,4 +10,9 @@ interface EmployeeDetailsDao : IDao<EmployeeEntity> {
 
     @Query("select * from employeeentity where userId=:userId")
     suspend fun getEmployeeDetailsByUserId(userId: Int): EmployeeEntity?
+
+    @Query("delete from employeeentity where userId=:userId")
+    suspend fun deleteById(userId: Int)
+
+
 }

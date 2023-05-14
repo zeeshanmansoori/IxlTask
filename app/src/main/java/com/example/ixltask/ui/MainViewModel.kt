@@ -96,11 +96,11 @@ class MainViewModel(private val database: IxlDatabase) : ViewModel() {
 
 
     fun onAccountTypeChanged(str: String) {
-        _selectedEmployeeDetails = selectedEmployeeDetails.copy(accountType = str )
+        _selectedEmployeeDetails = selectedEmployeeDetails.copy(accountType = str)
     }
 
     fun onWorkExperienceChanged(string: String) {
-        _selectedEmployeeDetails = selectedEmployeeDetails.copy(workExp = string )
+        _selectedEmployeeDetails = selectedEmployeeDetails.copy(workExp = string)
 
     }
 
@@ -127,6 +127,12 @@ class MainViewModel(private val database: IxlDatabase) : ViewModel() {
                 )
             )
         }
+
+    fun deleteItem(userEntity: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
+        database.getUserDao().delete(userEntity)
+        database.getEmployeeDao().deleteById(userEntity.id)
+        database.getBankDetailsDao().deleteById(userEntity.id)
+    }
 
 
 }

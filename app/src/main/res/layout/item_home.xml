@@ -33,7 +33,6 @@
             tools:text="User Name" />
 
 
-
         <TextView
             android:id="@+id/phoneNumberTv"
             android:layout_width="match_parent"
@@ -56,6 +55,15 @@
             tools:text="Gender" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/delete_btn"
+        style="@style/Widget.AppCompat.ActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:contentDescription="delete item"
+        android:src="@drawable/baseline_delete_24" />
 
 </com.google.android.material.card.MaterialCardView>
 

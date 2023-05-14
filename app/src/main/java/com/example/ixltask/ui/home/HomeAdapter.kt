@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ixltask.data.local.model.UserEntity
 import com.example.ixltask.databinding.ItemHomeBinding
 
-class HomeAdapter(private val onItemClick: (UserEntity) -> Unit) :
+class HomeAdapter(
+    private val onItemClick: (UserEntity) -> Unit,
+    private val onDeleteClick: (UserEntity) -> Unit
+) :
     ListAdapter<UserEntity, HomeAdapter.HomeViewHolder>(diffUtil) {
 
     companion object {
@@ -29,6 +32,10 @@ class HomeAdapter(private val onItemClick: (UserEntity) -> Unit) :
         init {
             binding.root.setOnClickListener {
                 onItemClick.invoke(getItem(adapterPosition))
+            }
+
+            binding.deleteBtn.setOnClickListener {
+                onDeleteClick.invoke(getItem(adapterPosition))
             }
         }
 

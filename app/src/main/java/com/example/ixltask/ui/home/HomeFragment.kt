@@ -19,7 +19,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
 
     private val viewModel by activityViewModels<MainViewModel>()
-    private val homeAdapter = HomeAdapter(::onHomeItemClick)
+    private val homeAdapter = HomeAdapter(::onHomeItemClick,::onDeleteClick)
+
+    private fun onDeleteClick(userEntity: UserEntity) {
+        viewModel.deleteItem(userEntity)
+    }
 
     private fun onHomeItemClick(userEntity: UserEntity) {
         val action = HomeFragmentDirections.actionHomeFragmentToUserDetailsFragment()
