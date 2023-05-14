@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    app:strokeWidth=".5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/userIdTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            tools:text="User ID" />
+
+        <TextView
+            android:id="@+id/userNameTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            tools:text="User Name" />
+
+
+
+        <TextView
+            android:id="@+id/phoneNumberTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            tools:text="Phone Number" />
+
+        <TextView
+            android:id="@+id/dateOfBirthTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            tools:text="Date of Birth" />
+
+
+        <TextView
+            android:id="@+id/genderTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Gender" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+

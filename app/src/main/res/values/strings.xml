@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">IxlTask</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter_valid_email">Enter email address\n</string>
+    <string name="enter_10_digit_phone_number">Enter 10 digit Phone number.\n</string>
+    <string name="cant_be_empty">Cant be empty\t</string>
+</resources>
