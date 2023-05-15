@@ -43,8 +43,8 @@ class HomeAdapter(
         fun bind(data: UserEntity) = binding.run {
             userIdTv.text = "UserID : ${data.id}"
             userNameTv.text = "Name : ${data.firstName} ${data.lastName}"
-            phoneNumberTv.text = "Gender : ${data.phoneNo}"
-            dateOfBirthTv.text = "Gender : ${data.dob}"
+            phoneNumberTv.text = "Phone No : ${data.phoneNo}"
+            dateOfBirthTv.text = "DOB : ${data.dob}"
             genderTv.text = "Gender : ${data.gender}"
         }
 

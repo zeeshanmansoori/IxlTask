@@ -4,8 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
+import android.widget.RadioButton
 import androidx.fragment.app.activityViewModels
 import androidx.viewbinding.ViewBinding
 import com.example.ixltask.databinding.FragmentUserDetailsBinding
@@ -38,14 +37,22 @@ class UserDetailsFragment : BaseFragment<FragmentUserDetailsBinding>() {
                 binding.dateOfBirthEditText.setText(user.dob)
                 binding.phoneNumberEditText.setText(user.phoneNo)
                 binding.genderAutoCompleteTextView.setText(user.gender)
+                val isFemaleChecked = user.gender.lowercase().contains("female")
+                binding.maleRBtn.isChecked = !isFemaleChecked
+                binding.femaleRBtn.isChecked = isFemaleChecked
             }
         }
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("Male", "Female", "Other")
-        )
-        (binding.genderAutoCompleteTextView as? AutoCompleteTextView)?.setAdapter(adapter)
+//        val adapter = ArrayAdapter(
+//            requireContext(),
+//            android.R.layout.simple_spinner_dropdown_item,
+//            listOf("Male", "Female", "Other")
+//        )
+//        (binding.genderAutoCompleteTextView as? AutoCompleteTextView)?.setAdapter(adapter)
+
+        binding.genderRadioGrp.setOnCheckedChangeListener { group, checkedId ->
+            val gender = group.findViewById<RadioButton>(checkedId).text.toString()
+            viewModel.onGenderChanged(gender)
+        }
     }
 
     private var onDateSetCallback =
@@ -65,7 +72,6 @@ class UserDetailsFragment : BaseFragment<FragmentUserDetailsBinding>() {
         proceedBtn.setOnClickListener {
             val isInputValid = isInputInvalid()
             if (isInputValid) return@setOnClickListener
-            viewModel.onGenderChanged(genderAutoCompleteTextView.text.toString())
             findNavControllerSafely()?.navigate(UserDetailsFragmentDirections.actionUserDetailsFragmentToEmployeeDetailsFragment())
         }
 
@@ -110,8 +116,13 @@ class UserDetailsFragment : BaseFragment<FragmentUserDetailsBinding>() {
             return true
         }
 
-        val gender = genderAutoCompleteTextView.text?.toString()
-        if (gender.isNullOrBlank() || genderAutoCompleteTextView.text.isNullOrBlank()) {
+//        val gender = genderAutoCompleteTextView.text?.toString()
+//        if (gender.isNullOrBlank() || genderAutoCompleteTextView.text.isNullOrBlank()) {
+//            showToast("please select gender")
+//            return true
+//        }
+        val hasGenderSelected = genderRadioGrp.checkedRadioButtonId != View.NO_ID
+        if (!hasGenderSelected) {
             showToast("please select gender")
             return true
         }
