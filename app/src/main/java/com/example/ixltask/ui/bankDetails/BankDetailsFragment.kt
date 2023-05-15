@@ -41,9 +41,8 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
     private val takeImageLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
             imageTaken = isSuccess
-            if (isSuccess) {
+            if (isSuccess && this::tempFileUri.isInitialized) {
                 binding.previewIv.load(tempFileUri)
-
             }
 
         }
@@ -61,12 +60,17 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
         setListeners()
         init()
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            val tempFile = createTempFile(requireContext())
-            tempFileUri = FileProvider.getUriForFile(
-                requireContext(),
-                "com.example.ixltask.provider",
-                tempFile
-            )
+
+            createTempFile(requireContext())?.let { file ->
+                tempFileUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.example.ixltask.provider",
+                    file
+                )
+
+
+            }
+
         }
     }
 
@@ -110,7 +114,7 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
     private fun setListeners() = binding.run {
         selectImageBtn.setOnClickListener {
             updateOrRequestPermission()
-            if (cameraPermissionGranted) {
+            if (cameraPermissionGranted && this@BankDetailsFragment::tempFileUri.isInitialized) {
                 takeImageLauncher.launch(tempFileUri)
             }
 
@@ -119,10 +123,12 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
         proceedBtn.setOnClickListener {
             val inputInvalid = isInputInvalid()
             if (inputInvalid) return@setOnClickListener
+            val imageUrl =
+                if (this@BankDetailsFragment::tempFileUri.isInitialized) tempFileUri.toString() else ""
             viewModel.saveDetails(
                 binding.bankNameAutoCompleteTextView.text.toString(),
                 binding.branchNameAutoCompleteTextView.text.toString(),
-                tempFileUri.toString(),
+                imageUrl,
             )
             findNavControllerSafely()?.popBackStack(R.id.homeFragment, inclusive = false)
         }
@@ -190,9 +196,16 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
             permissionsLauncher.launch(permissionsToRequest.toTypedArray())
         }
     }
+
+    private suspend fun createTempFile(context: Context): File? = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            File.createTempFile("temp_image", ".jpg", storageDir)
+        } catch (e: Exception) {
+            showToast("Cant create file exception ${e.message}")
+            null
+        }
+    }
 }
 
-suspend fun createTempFile(context: Context): File = withContext(Dispatchers.IO) {
-    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    return@withContext File.createTempFile("temp_image", ".jpg", storageDir)
-}
+
