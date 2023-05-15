@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -35,8 +36,28 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
 
     private val viewModel by activityViewModels<MainViewModel>()
     private lateinit var tempFileUri: Uri
+    private var readPermissionGranted = false
+    private var writePermissionGranted = false
     private var cameraPermissionGranted = false
     private var imageTaken = false
+
+    private val permissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            readPermissionGranted =
+                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: readPermissionGranted
+            writePermissionGranted =
+                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: writePermissionGranted
+            cameraPermissionGranted =
+                permissions[Manifest.permission.CAMERA] ?: cameraPermissionGranted
+
+            if (!readPermissionGranted) {
+                showToast("Can't read files without permission.")
+            }
+            if (!writePermissionGranted) {
+                showToast("write permission not granted.")
+            }
+        }
+
 
     private val takeImageLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
@@ -47,31 +68,10 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
 
         }
 
-    private val permissionsLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            cameraPermissionGranted =
-                permissions[Manifest.permission.CAMERA] ?: cameraPermissionGranted
-
-        }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         init()
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-
-            createTempFile(requireContext())?.let { file ->
-                tempFileUri = FileProvider.getUriForFile(
-                    requireContext(),
-                    "com.example.ixltask.provider",
-                    file
-                )
-
-
-            }
-
-        }
     }
 
     private fun init() {
@@ -113,9 +113,21 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
 
     private fun setListeners() = binding.run {
         selectImageBtn.setOnClickListener {
-            updateOrRequestPermission()
-            if (cameraPermissionGranted && this@BankDetailsFragment::tempFileUri.isInitialized) {
-                takeImageLauncher.launch(tempFileUri)
+            updateOrRequestPermissions()
+            if (readPermissionGranted && writePermissionGranted && cameraPermissionGranted && this@BankDetailsFragment::tempFileUri.isInitialized) {
+                viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+
+                    createTempFile(requireContext())?.let { file ->
+                        tempFileUri = FileProvider.getUriForFile(
+                            requireContext(),
+                            "com.example.ixltask.provider",
+                            file
+                        )
+                        takeImageLauncher.launch(tempFileUri)
+                    }
+
+                }
+
             }
 
         }
@@ -177,17 +189,33 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
         return false
     }
 
-    private fun updateOrRequestPermission() {
+    private fun updateOrRequestPermissions() {
+        val hasReadPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasWritePermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+        val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
         val hasCameraPermission = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
 
+        readPermissionGranted = hasReadPermission
+        writePermissionGranted = hasWritePermission || minSdk29
         cameraPermissionGranted = hasCameraPermission
 
         val permissionsToRequest = mutableListOf<String>()
-
+        if (!writePermissionGranted) {
+            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        if (!readPermissionGranted) {
+            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
         if (!cameraPermissionGranted) {
             permissionsToRequest.add(Manifest.permission.CAMERA)
         }
