@@ -149,13 +149,19 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
 
 
         accountNumberEt.requestFocus()
-        if (accountNumberTl.error != null || accountNumberEt.text.isNullOrBlank())
+        if (accountNumberTl.error != null || accountNumberEt.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            accountNumberEt.setText("")
             return true
+        }
 
 
         ifscCodeEt.requestFocus()
-        if (ifscCodeTl.error != null || ifscCodeEt.text.isNullOrBlank())
+        if (ifscCodeTl.error != null || ifscCodeEt.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            ifscCodeEt.setText("")
             return true
+        }
 
         if (!imageTaken) {
             showToast("Please capture Passbook Image")
@@ -186,7 +192,7 @@ class BankDetailsFragment : BaseFragment<FragmentBankDetailsBinding>() {
     }
 }
 
-suspend fun createTempFile(context: Context) = withContext(Dispatchers.IO) {
+suspend fun createTempFile(context: Context): File = withContext(Dispatchers.IO) {
     val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
     return@withContext File.createTempFile("temp_image", ".jpg", storageDir)
 }

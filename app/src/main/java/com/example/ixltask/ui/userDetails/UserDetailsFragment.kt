@@ -97,18 +97,28 @@ class UserDetailsFragment : BaseFragment<FragmentUserDetailsBinding>() {
     private fun isInputInvalid(): Boolean = binding.run {
 
         firstNameEditText.requestFocus()
-        if (firstNameInputLayout.error != null || firstNameEditText.text.isNullOrBlank())
+        if (firstNameInputLayout.error != null || firstNameEditText.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            firstNameEditText.setText("")
             return true
+        }
 
 
         lastNameEditText.requestFocus()
-        if (lastNameInputLayout.error != null || lastNameEditText.text.isNullOrBlank())
+        if (lastNameInputLayout.error != null || lastNameEditText.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            lastNameEditText.setText("")
             return true
+        }
 
 
         phoneNumberEditText.requestFocus()
-        if (phoneNumberInputLayout.error != null || phoneNumberEditText.text.isNullOrBlank())
+        if (phoneNumberInputLayout.error != null || phoneNumberEditText.text.isNullOrBlank()){
+            // to trigger the editTextListener
+            phoneNumberEditText.setText("")
             return true
+        }
+
 
         val dob = dateOfBirthEditText.text?.toString()
         if (dob.isNullOrBlank() || dateOfBirthEditText.text.isNullOrBlank()) {

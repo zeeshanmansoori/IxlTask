@@ -59,18 +59,27 @@ class EmployeeDetailsFragment : BaseFragment<FragmentEmployeeDetailsBinding>() {
     private fun isInputInvalid(): Boolean = binding.run {
 
         employeeNoEt.requestFocus()
-        if (employeeNoTl.error != null || employeeNoEt.text.isNullOrBlank())
+        if (employeeNoTl.error != null || employeeNoEt.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            employeeNoEt.setText("")
             return true
+        }
 
 
         employeeNameEt.requestFocus()
-        if (employeeNameTl.error != null || employeeNameEt.text.isNullOrBlank())
+        if (employeeNameTl.error != null || employeeNameEt.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            employeeNameEt.setText("")
             return true
+        }
 
 
         designationEt.requestFocus()
-        if (designationTl.error != null || designationEt.text.isNullOrBlank())
+        if (designationTl.error != null || designationEt.text.isNullOrBlank()) {
+            // to trigger the editTextListener
+            designationEt.setText("")
             return true
+        }
 
         val accType = accountTypeAutoCompleteTextView.text?.toString()
         if (accType.isNullOrBlank() || accountTypeAutoCompleteTextView.text.isNullOrBlank()) {
